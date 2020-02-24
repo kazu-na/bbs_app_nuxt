@@ -1,5 +1,7 @@
 import colors from 'vuetify/es5/util/colors'
 
+// nuxt.config.jsを修正したらサーバを立ち上げ直すこと
+require('dotenv').config();
 export default {
   mode: 'spa',
   /*
@@ -31,12 +33,14 @@ export default {
   */
   plugins: [
     "@/plugins/vuetify",
+    "@/plugins/auth-check",
   ],
   /*
   ** Nuxt.js dev-modules
   */
   buildModules: [
     '@nuxtjs/vuetify',
+    '@nuxtjs/dotenv',
   ],
   /*
   ** Nuxt.js modules
