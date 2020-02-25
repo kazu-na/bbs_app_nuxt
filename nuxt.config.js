@@ -1,7 +1,8 @@
 import colors from 'vuetify/es5/util/colors'
 
+const environment = process.env.NODE_ENV || 'development';
+const cross_env = require(`./env.${environment}.js`)
 // nuxt.config.jsを修正したらサーバを立ち上げ直すこと
-require('dotenv').config();
 export default {
   mode: 'spa',
   /*
@@ -33,8 +34,10 @@ export default {
   */
   plugins: [
     "@/plugins/vuetify",
-    "@/plugins/auth-check",
+    "@/plugins/firebase",
+    "@/plugins/auth-check"
   ],
+  env: cross_env,
   /*
   ** Nuxt.js dev-modules
   */
