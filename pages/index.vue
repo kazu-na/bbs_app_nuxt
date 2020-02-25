@@ -2,6 +2,7 @@
   <!-- v-ifを使えばstoreのuserがセットされたら、v-ifで囲っている部分が描画されるようになるので、nameと書いている箇所でエラーが起きることは無くなる -->
   <div v-if="user">
     <p>{{user.name}}</p>
+    <li class="errors" v-for="(error, i) in errors" :key="i">{{error}}</li>
     <AddBoard @submit="addBoard" />
     <BoardList :boards="user.boards" />
   </div>
@@ -21,18 +22,20 @@ export default {
   computed: {
     user() {
       return this.$store.state.currentUser;
+    },
+    errors() {
+      return this.$store.state.errors;
     }
   },
-  data(){
-    return {
-      boards: []
-    };
+  data() {
+    return {};
   },
   // ログインしていないユーザーはログイン画面にリダイレクトさせるようにする
   fetch({ store, redirect }) {
     store.watch(
       state => state.currentUser,
       (newUser, oldUser) => {
+        console.log({ newUser });
         if (!newUser) {
           return redirect("/login");
         }
@@ -41,15 +44,29 @@ export default {
   },
   methods: {
     async addBoard(board) {
-      const { data } = await axios.post("/v1/boards", { board });
-      this.$store.commit("setUser", {
-        ...this.user,
-        boards: [...this.user.boards, data]
-      });
+      try {
+        const { data } = await axios.post("/v1/boards", { board });
+        this.$store.commit("setUser", {
+          ...this.user,
+          boards: [...this.user.boards, data]
+        });
+        this.$store.commit("clearErrors");
+      } catch (error) {
+        const { status } = error.response;
+        if (status === 422) {
+          this.$store.commit("setError", "タイトルが空です");
+        }
+      }
     }
+  },
+  destroyed() {
+    this.$store.commit("clearErrors");
   }
 };
 </script>
 
-<style>
+<style scoped>
+.errors {
+  color: "red";
+}
 </style>
