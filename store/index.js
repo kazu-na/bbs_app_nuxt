@@ -1,20 +1,16 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import state from "./state"
+import mutations from "./mutations"
+import actions from "./actions"
 
 Vue.use(Vuex)
 
 const store = () => {
   return new Vuex.Store({
-    state: {
-      currentUser: null,
-    },
-    mutations: {
-      setUser(state, payload) {
-          state.currentUser = payload
-      },
-    },
-    actions: {
-    }
+    state,
+    mutations,
+    actions
   })
 }
 

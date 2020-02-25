@@ -1,5 +1,7 @@
 <template>
   <v-app dark>
+    <Success />
+    <Loading />
     <v-navigation-drawer
       v-model="drawer"
       :mini-variant="miniVariant"
@@ -89,24 +91,52 @@
 </template>
 
 <script>
+import Loading from "@/components/Loading";
+import Success from "@/components/Success";
 export default {
+  computed: {
+    user() {
+      return this.$store.state.currentUser;
+    },
+    items() {
+      if (this.user) {
+        return [
+          {
+            icon: 'mdi-apps',
+            title: '掲示板',
+            to: '/'
+          },
+          {
+            icon: 'mdi-chart-bubble',
+            title: 'マイページ',
+            to: '/mypage'
+          }
+        ];
+      } else {
+        return [
+          {
+            icon: "mdi-apps",
+            title: "ログイン",
+            to: "/login"
+          },
+          {
+            icon: "mdi-chart-bubble",
+            title: "新規登録",
+            to: "/signup"
+          }
+        ];
+      }
+    }
+  },
+  components: {
+    Loading,
+    Success
+  },
   data () {
     return {
       clipped: false,
       drawer: false,
       fixed: false,
-      items: [
-        {
-          icon: 'mdi-apps',
-          title: '掲示板',
-          to: '/'
-        },
-        {
-          icon: 'mdi-chart-bubble',
-          title: 'マイページ',
-          to: '/mypage'
-        }
-      ],
       miniVariant: false,
       right: true,
       rightDrawer: false,
