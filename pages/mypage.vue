@@ -23,6 +23,14 @@ export default {
         .auth()
         .signOut()
         .then(() => {
+          this.$store.commit("setNotice", {
+            status: true,
+            message: "ログアウトしました"
+          });
+          //2秒後に隠す
+          setTimeout(() => {
+            this.$store.commit("setNotice",{});
+          }, 2000);
           this.$store.commit("setUser", null);
           this.$router.push("/login");
         })

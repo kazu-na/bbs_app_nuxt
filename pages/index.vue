@@ -3,14 +3,14 @@
   <div v-if="user">
     <p>{{user.name}}</p>
     <AddBoard @submit="addBoard" />
-    <BoardList :boards="boards" />
+    <BoardList :boards="user.boards" />
   </div>
 </template>
 
 <script>
 import AddBoard from "@/components/AddBoard";
 import BoardList from "@/components/BoardList";
-
+import axios from "@/plugins/axios";
 export default {
   components: {
     AddBoard,
@@ -28,10 +28,23 @@ export default {
       boards: []
     };
   },
+  // ログインしていないユーザーはログイン画面にリダイレクトさせるようにする
+  fetch({ store, redirect }) {
+    store.watch(
+      state => state.currentUser,
+      (newUser, oldUser) => {
+        if (!newUser) {
+          return redirect("/login");
+        }
+      }
+    );
+  },
   methods: {
-    addBoard(title) {
-      this.boards.push({
-        title
+    async addBoard(board) {
+      const { data } = await axios.post("/v1/boards", { board });
+      this.$store.commit("setUser", {
+        ...this.user,
+        boards: [...this.user.boards, data]
       });
     }
   }

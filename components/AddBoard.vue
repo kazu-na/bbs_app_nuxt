@@ -12,6 +12,7 @@
     </v-container>
   </v-form>
 </template>
+
 <script>
 export default {
   data() {
@@ -21,7 +22,11 @@ export default {
   },
   methods: {
     handleSubmit() {
-      this.$emit("submit", this.title);
+      const board = {
+        title: this.title,
+        user_id: this.user.id,
+      };
+      this.$emit("submit", board);
       this.title = "";
     }
   }
