@@ -1,6 +1,6 @@
 import colors from 'vuetify/es5/util/colors'
 
-const environment = process.env.NODE_ENV;
+const environment = process.env.NODE_ENV || 'development';
 const envSet = require(`./env.${environment}.js`)
 // nuxt.config.jsを修正したらサーバを立ち上げ直すこと
 export default {
