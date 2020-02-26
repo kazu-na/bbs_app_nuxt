@@ -4,6 +4,9 @@ import state from "./state"
 import mutations from "./mutations"
 import actions from "./actions"
 
+// Vuexの厳格モードをオフにする
+export const strict = false
+
 Vue.use(Vuex)
 
 const store = () => {

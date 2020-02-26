@@ -24,7 +24,7 @@
           @click:append="show2 = !show2"
         ></v-text-field>
         <v-btn class="mr-4" @click="signup">登録する</v-btn>
-        <p v-for="(error,i) in errors" :key="i" class="errors">{{error}}</p>
+        <p v-if="error" class="errors">{{error}}</p>
       </form>
     </v-col>
   </v-row>
@@ -43,12 +43,8 @@ export default {
       passwordConfirm: "",
       show1: false,
       show2: false,
+      error: ""
     };
-  },
-  computed: {
-    errors() {
-      return this.$store.state.errors;
-    }
   },
   methods: {
     signup() {
@@ -56,12 +52,33 @@ export default {
         this.error = "※パスワードとパスワード確認が一致していません";
         return;
       }
-      const payload = {
-        email: this.email,
-        password: this.password,
-        name: this.name
-      };
-      this.$store.dispatch("signUp", payload);
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(this.email, this.password)
+        .then(res => {
+          const user = {
+            email: res.user.email,
+            name: this.name,
+            uid: res.user.uid
+          };
+          axios.post("/v1/users",{ user }).then(() => {
+            this.$router.push("/");
+          });
+        })
+        .catch(error => {
+          this.error = (code => {
+            switch (code) {
+              case "auth/email-already-in-use":
+                return "既にそのメールアドレスは使われています";
+              case "auth/wrong-password":
+                return "※パスワードが正しくありません";
+              case "auth/weak-password":
+                return "※パスワードは最低6文字以上にしてください";
+              default:
+                return "※メールアドレスとパスワードをご確認ください";
+            }
+          })(error.code);
+        });
     }
   }
 };

@@ -1,27 +1,25 @@
 import firebase from "@/plugins/firebase"
-import axios from "@/plugins/axios"
 
 const actions = {
   login({
     commit,
   }, payload) {
-    const { email, password } = payload
     firebase
       .auth()
-      .signInWithEmailAndPassword(email, password)
+      .signInWithEmailAndPassword(payload.email, payload.password)
       .then(() => {
         commit("setNotice", {
           status: true,
           message: "ログインしました"
         });
-        //2秒後に隠す
         setTimeout(() => {
           commit("setNotice", {});
         }, 2000);
         this.$router.push("/");
       })
       .catch(error => {
-        const errorMsg = (code => {
+        console.log(error);
+        this.error = (code => {
           switch (code) {
             case "auth/user-not-found":
               return "メールアドレスが間違っています";
@@ -31,53 +29,7 @@ const actions = {
               return "※メールアドレスとパスワードをご確認ください";
           }
         })(error.code);
-        commit("setError", errorMsg)
-      });
-  },
-  signUp({
-    commit,
-  }, payload) {
-    const { email, password, name } = payload
-    commit("setLoading", true);
-    firebase
-      .auth()
-      .createUserWithEmailAndPassword(email, password)
-      .then(res => {
-        const user = {
-          email: res.user.email,
-          name,
-          uid: res.user.uid
-        };
-        axios.post("/v1/users", { user }).then(res => {
-          commit("setLoading", false);
-          commit("setNotice", {
-            status: true,
-            message: "BBS_APPへようこそ！"
-          });
-          setTimeout(() => {
-            commit("setNotice", {});
-          }, 2000);
-          commit("setUser", res.data);
-          this.$router.push("/");
-        });
-      })
-      .catch(error => {
-        commit("setLoading", false);
-        const errorMsg = (code => {
-          switch (code) {
-            case "auth/email-already-in-use":
-              return "既にそのメールアドレスは使われています";
-            case "auth/wrong-password":
-              return "※パスワードが正しくありません";
-            case "auth/weak-password":
-              return "※パスワードは最低6文字以上にしてください";
-            default:
-              return "※メールアドレスとパスワードをご確認ください";
-          }
-        })(error.code);
-        commit("setError", errorMsg)
       });
   }
 }
-
 export default actions;
