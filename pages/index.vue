@@ -40,6 +40,14 @@ export default {
   methods: {
     async addBoard(board) {
       const { data } = await axios.post("/v1/boards", { board });
+      this.$store.commit("setNotice", {
+        status: true,
+        message: "投稿しました"
+      });
+      //2秒後に隠す
+      setTimeout(() => {
+        this.$store.commit("setNotice",{});
+      }, 2000);
       this.$store.commit("setUser", {
         ...this.user,
         boards: [...this.user.boards, data]

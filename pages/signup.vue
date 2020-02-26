@@ -62,6 +62,14 @@ export default {
             uid: res.user.uid
           };
           axios.post("/v1/users",{ user }).then(() => {
+            this.$store.commit("setNotice", {
+              status: true,
+              message: "BBS_APPへようこそ！"
+            });
+            //2秒後に隠す
+            setTimeout(() => {
+              this.$store.commit("setNotice",{});
+            }, 2000);
             this.$router.push("/");
           });
         })
