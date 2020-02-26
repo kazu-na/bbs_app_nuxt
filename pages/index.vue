@@ -27,16 +27,16 @@ export default {
     return {};
   },
   // ログインしていないユーザーはログイン画面にリダイレクトさせるようにする
-  // fetch({ store, redirect }) {
-  //   store.watch(
-  //     state => state.currentUser,
-  //     (newUser, oldUser) => {
-  //       if (!newUser) {
-  //         return redirect("/login");
-  //       }
-  //     }
-  //   );
-  // },
+  fetch({ store, redirect }) {
+    store.watch(
+      state => state.currentUser,
+      (newUser, oldUser) => {
+        if (!newUser) {
+          return redirect("/login");
+        }
+      }
+    );
+  },
   methods: {
     async addBoard(board) {
       const { data } = await axios.post("/v1/boards", { board });

@@ -52,6 +52,8 @@ export default {
         this.error = "※パスワードとパスワード確認が一致していません";
         return;
       }
+      //ローディングをonにする
+      this.$store.commit("setLoading", true);
       firebase
         .auth()
         .createUserWithEmailAndPassword(this.email, this.password)
@@ -61,7 +63,10 @@ export default {
             name: this.name,
             uid: res.user.uid
           };
-          axios.post("/v1/users",{ user }).then(() => {
+          axios.post("/v1/users",{ user }).then(res => {
+            this.$store.commit("setLoading", false);　//ローディングをoffにする
+            this.$store.commit("setUser", res.data); //promiseの値をstoreに入れる
+            this.$router.push("/");
             this.$store.commit("setNotice", {
               status: true,
               message: "BBS_APPへようこそ！"
@@ -70,7 +75,6 @@ export default {
             setTimeout(() => {
               this.$store.commit("setNotice",{});
             }, 2000);
-            this.$router.push("/");
           });
         })
         .catch(error => {
