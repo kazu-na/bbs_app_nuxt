@@ -5,12 +5,10 @@
   "author": "kazu_na",
   "private": true,
   "scripts": {
-    "dev": "nuxt",
+    "dev": "cross-env NODE_ENV=\"dev\" nuxt",
     "build": "nuxt build",
-    "build:stg": "cross-env NODE_ENV=\"staging\" nuxt build",
-    "build:prod": "cross-env NODE_ENV=\"production\" nuxt build",
     "start": "nuxt start",
-    "generate": "nuxt generate"
+    "generate": "cross-env NODE_ENV=\"pro\" nuxt generate"
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.3.6",
